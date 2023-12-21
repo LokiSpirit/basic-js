@@ -14,45 +14,37 @@ const { NotImplementedError } = require('../extensions/index.js');
  *
  */
 function transform(arr) {
- /*  let excluded = []
-  try {
-    if (!Array.isArray(arr)) throw new Error(`'arr' parameter must be an instance of the Array!`);
+    if (!Array.isArray(arr)) {
+      throw new Error(`'arr' parameter must be an instance of the Array!`);
+    }
     if (arr.length === 0) return [];
-    let result = [...arr];
-    arr.forEach((item, index) => {
-      if (item === '--discard-prev'
-        && (index - 1 >= 0)
-        && Number.isFinite(arr[index - 1])) {
-        result[index - 1] = 'delete';
+    let result = [];
+    let i = 0;
+    while (i < arr.length) {
+      if (arr[i] === '--discard-prev') {
+        if (i - 1 >= 0) {
+          result[result.length-1] = 'delete'
+        }
+      } else if (arr[i] === '--discard-next') {
+        if (i + 1 < arr.length) {
+          result.push('delete');
+          i++;
+        }
+      } else if (arr[i] === '--double-prev'){
+        if (i - 1 >= 0) {
+          result.push(result[result.length - 1]);
+        }
+      } else if (arr[i] === '--double-next') {
+        if (i + 1 < arr.length) {
+          result.push(arr[i + 1]);
+        }
+      } else {
+        result.push(arr[i]);
       }
+      i++;
+    }
 
-      if (item === '--discard-next'
-        && (index + 1 < arr.length)
-        && Number.isFinite(arr[index + 1])) {
-        result[index + 1] = 'delete';
-      }
-
-      if (item === '--double-prev'
-        && (index - 1 >= 0)
-        && Number.isFinite(result[index - 1])) {
-        result.splice(index, 0, arr[index - 1]);
-      }
-
-      if (item === '--double-next'
-        && (index + 1 < arr.length)
-        && Number.isFinite(arr[index + 1])) {
-        result.splice(index, 0, arr[index + 1]);
-      }
-    });
-    result = result.filter(item => Number.isFinite(item));
-
-    return result;
-  } catch(e) {
-    throw e;
-  } */
-
-    throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+   return result.filter(item => item !== 'delete');
 }
 
 module.exports = {
