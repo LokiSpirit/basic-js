@@ -20,22 +20,13 @@ const { NotImplementedError } = require('../extensions/index.js');
  *
  */
 class VigenereCipheringMachine {
-
-  constructor(direct) {
-  /*   try {
-      if (arguments.length === 0) throw new Error();
-      } catch(e) {
-      throw e;
-    } */
+  constructor(direct=true) {
     this.latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     this.direct = direct;
-  }
+}
+
   encrypt(str, key) {
-    try {
-      if (arguments.length === 0) throw new Error();
-    } catch (e) {
-      throw e;
-    }
+    if (!str || !key) throw new Error("Incorrect arguments!");
     let strToEncrypt = str.toUpperCase();
     let keyWord = key.toUpperCase();
     let result = [];
@@ -43,26 +34,44 @@ class VigenereCipheringMachine {
     let index;
     let keyLength = keyWord.length;
     let keyIndex = 0;
-    for (let i = 0; i < strToEncrypt.length; i++){
+    for (let i = 0; i < strToEncrypt.length; i++) {
       pos = this.latin.indexOf(strToEncrypt[i]);
       if (pos === -1) {
         result.push(strToEncrypt[i]);
       } else {
-        index = this.latin.indexOf(keyWord[keyIndex%keyLength]) * 2;
+        index = this.latin.indexOf(strToEncrypt[i]) + this.latin.indexOf(keyWord[keyIndex]);
         index = index < this.latin.length ? index : index - this.latin.length;
         result.push(this.latin[index]);
-        keyIndex++;
+        keyIndex = keyIndex < keyLength-1 ? keyIndex + 1 : 0;
       }
     }
+    if (!this.direct) result.reverse();
     return result.join('');
   }
 
   decrypt(str, key) {
-    try {
-      if (arguments.length === 0) throw new Error();
-    } catch (e) {
-      throw e;
+    if (!str || !key) throw new Error("Incorrect arguments!");
+    /* Base calculations */
+     let strToEncrypt = str.toUpperCase();
+    let keyWord = key.toUpperCase();
+    let result = [];
+    let pos;
+    let index;
+    let keyLength = keyWord.length;
+    let keyIndex = 0;
+    for (let i = 0; i < strToEncrypt.length; i++) {
+      pos = this.latin.indexOf(strToEncrypt[i]);
+      if (pos === -1) {
+        result.push(strToEncrypt[i]);
+      } else {
+        index = this.latin.indexOf(strToEncrypt[i]) - this.latin.indexOf(keyWord[keyIndex]);
+        index = index > 0 ? index : (this.latin.length + index)%26;
+        result.push(this.latin[index]);
+        keyIndex = keyIndex < keyLength-1 ? keyIndex + 1 : 0;
+      }
     }
+    if (!this.direct) result.reverse();
+    return result.join('');
   }
 }
 
